@@ -1,0 +1,28 @@
+{
+  "endoscopy": {
+    "la_grade": "C",
+    "barretts": false,
+    "biopsy_finding": "normal",
+    "dilated_intercellular_spaces": false,
+    "peptic_stricture": false,
+    "intrathoracic_stomach": false,
+    "hiatal_hernia_present": false
+  },
+  "hrm": {
+    "peristalsis": "normal",
+    "dci_median": 1500
+  },
+  "ph_impedance": {
+    "test_state": "off_ppi",
+    "aet_pct": 9.2,
+    "total_reflux_episodes": 95
+  },
+  "clinical": {
+    "ppi_response": "partial",
+    "dominant_symptoms": ["heartburn"],
+    "prior_anti_reflux_surgery": "none",
+    "prior_bariatric_surgery": "none",
+    "contributing_medications": [],
+    "pregnant": false
+  }
+}
