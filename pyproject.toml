@@ -1,0 +1,30 @@
+[project]
+name = "gerd-dx"
+version = "0.1.0"
+description = "Mechanism-based GERD diagnostic reasoning tool (educational / decision-support only)."
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6",
+    "pyyaml>=6.0",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+web = ["streamlit>=1.30"]
+
+[project.scripts]
+gerd-dx = "gerd_dx.cli:app"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"gerd_dx.rules" = ["*.yaml"]
