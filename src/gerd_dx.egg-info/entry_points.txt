@@ -1,0 +1,2 @@
+[console_scripts]
+gerd-dx = gerd_dx.cli:app

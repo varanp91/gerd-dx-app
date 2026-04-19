@@ -1,0 +1,116 @@
+# ---------------------------------------------------------------------------
+# Clinical thresholds for the GERD diagnostic reasoner.
+#
+# This is the ONLY place clinical numbers live. All rule code references these
+# by name via the Thresholds dataclass (see rules/__init__.py). To retune the
+# reasoner (e.g. a Lyon update), edit here and nowhere else.
+#
+# Sources:
+#   - Lyon Consensus 2.0 (Gyawali et al., Gut 2024)
+#   - Chicago Classification v4.0 (Yadlapati et al., Neurogastro & Motil 2021)
+# ---------------------------------------------------------------------------
+
+lyon_2_0:
+  aet:
+    physiologic_upper: 4.0   # AET < 4%  = rules out pathologic reflux (off-PPI)
+    pathologic_lower: 6.0    # AET > 6%  = conclusive pathologic reflux (off-PPI)
+    # AET 4.0 - 6.0 = borderline / inconclusive band; adjudicated with adjuncts below.
+
+  reflux_episodes:
+    physiologic_upper: 40
+    pathologic_lower: 80
+
+  adjunctive:
+    mnbi_low_ohms: 1500        # mean nocturnal baseline impedance below = supportive
+    pspw_low_pct: 50           # post-reflux swallow-induced peristaltic wave index below = supportive
+    dis_supportive: true       # dilated intercellular spaces on biopsy = supportive
+
+  conclusive_endoscopic:
+    la_grades: [C, D]
+    barrett_min_length_cm: 1.0
+    peptic_stricture: true
+
+  borderline_adjudication:
+    # In the 4-6% AET band, reclassify as pathologic only when at least this many
+    # independent adjunctive findings are positive:
+    #   1. total reflux episodes >= pathologic_lower (80)
+    #   2. MNBI < mnbi_low_ohms
+    #   3. PSPW < pspw_low_pct
+    #   4. DIS present on biopsy
+    min_adjunctive_for_pathologic: 3
+
+# On-PPI workup: any on-PPI AET above this threshold emits a separate
+# "refractory GERD" flag, independent of the primary classification.
+on_ppi_refractory:
+  aet_pct_min: 4.0
+
+# Hiatal hernia-dominant bucket requires BOTH size and intrathoracic stomach.
+hiatal_hernia:
+  dominant_min_cm: 3.0
+  dominant_requires_intrathoracic_stomach: true
+  # Size context used by procedural recommendations:
+  tif_eligible_max_cm: 2.0
+  c_tif_min_cm: 2.0
+  c_tif_max_cm: 4.0
+
+# ---------------------------------------------------------------------------
+# Chicago Classification v4.0 — major motility disorders
+# ---------------------------------------------------------------------------
+chicago_v4:
+  iem:
+    ineffective_swallow_dci_max: 450     # DCI <450 = ineffective swallow
+    failed_swallow_dci_max: 100          # DCI <100 = failed swallow
+    ineffective_pct_min: 70              # Path A: >=70% ineffective swallows
+    mixed_ineffective_pct_min: 50        # Path B: >=50% ineffective ...
+    mixed_failed_pct_min: 25             # ... AND >=25% failed
+  absent_contractility_failed_pct: 100   # 100% failed + normal IRP
+  jackhammer:
+    dci_min: 8000
+    pct_min: 20                           # >=20% swallows with DCI >=8000
+  des_premature_pct_min: 20               # >=20% premature swallows with normal IRP
+  achalasia_irp_supine_min: 15            # elevated median IRP, supine
+
+# ---------------------------------------------------------------------------
+# EndoFLIP — cutoffs defined at 60mL only (per clinical direction)
+# ---------------------------------------------------------------------------
+endoflip:
+  volume_ml: 60
+  egj_di_reduced: 2.8            # mm^2/mmHg — reduced distensibility
+  egj_di_severely_reduced: 2.0   # mm^2/mmHg — severely reduced (suggests achalasia / obstructed EGJ)
+
+# ---------------------------------------------------------------------------
+# Eosinophilic esophagitis
+# ---------------------------------------------------------------------------
+eoe:
+  eos_per_hpf_min: 15
+
+# ---------------------------------------------------------------------------
+# Gastroparesis (4-hour scintigraphy standard)
+# ---------------------------------------------------------------------------
+gastroparesis:
+  retention_2h_min_pct: 60
+  retention_4h_min_pct: 10
+
+# ---------------------------------------------------------------------------
+# Symptom-reflux association
+#   - SI >=50% is used for classification (reflux hypersensitivity vs functional).
+#   - SAP is intentionally NOT used in classification rules per clinical direction;
+#     it is displayed in the reasoning trace only if provided.
+# ---------------------------------------------------------------------------
+symptom_association:
+  si_positive_pct: 50
+
+# ---------------------------------------------------------------------------
+# Contributing factors — medications that modify management but do NOT change
+# mechanism classification. Classifier emits these as a separate list.
+# ---------------------------------------------------------------------------
+contributing_factors:
+  medications:
+    - glp1
+    - ccb
+    - nitrate
+    - opioid
+    - anticholinergic
+    - bisphosphonate
+    - tricyclic
+    - benzodiazepine

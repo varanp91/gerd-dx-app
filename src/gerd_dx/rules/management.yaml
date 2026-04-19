@@ -1,0 +1,394 @@
+# ---------------------------------------------------------------------------
+# Management recommendations per mechanism bucket.
+#
+# This file is the single source of truth for management content. The engine
+# looks up each ranked mechanism here and attaches the plan to the CaseOutput.
+#
+# Clinical conventions encoded (from user direction earlier in design):
+#   - H2RA wording:   "as needed when breakthrough occurs" (NOT bedtime-only)
+#   - MSA (LINX):     NOT listed as a procedural option
+#   - TIF:            indicated for hiatal hernia <= 2cm with LA <= B
+#   - c-TIF:          indicated for hiatal hernia > 2cm AND < 4cm with LA < B
+#   - IEM:            Nissen is CONTRAINDICATED (postoperative dysphagia risk);
+#                     Toupet preferred; TIF / c-TIF may still be considered.
+#
+# The classifier is decision-SUPPORT. Every procedural entry lists its
+# indication so the clinician matches the option to the patient's anatomy;
+# the tool does not silently filter options by size/LA because the patient-
+# specific call is the clinician's.
+# ---------------------------------------------------------------------------
+
+true_gerd_competent_peristalsis:
+  first_line:
+    - "PPI once daily 30–60 min before meals x 8 weeks (escalate to BID if partial response)"
+    - "Confirm PPI adherence and timing before declaring failure"
+    - "Lifestyle modifications (see below)"
+  escalation:
+    - "Switch to P-CAB (vonoprazan) where available"
+    - "Add H2RA as needed when breakthrough symptoms occur"
+    - "Add alginate after meals and at bedtime for postprandial acid pocket"
+    - "On-PPI pH-impedance if refractory to confirm whether ongoing symptoms are acid, non-acid, or functional"
+  procedural:
+    - id: nissen
+      label: "Nissen (complete 360°) fundoplication"
+      indication: "Objective GERD with intact peristalsis; failed or intolerant of medical therapy"
+    - id: toupet
+      label: "Toupet (partial posterior 270°) fundoplication"
+      indication: "Alternative wrap with lower postoperative dysphagia risk; acceptable in intact peristalsis"
+    - id: tif
+      label: "Transoral incisionless fundoplication (TIF)"
+      indication: "Hiatal hernia <= 2 cm AND LA grade <= B"
+    - id: c_tif
+      label: "Concomitant hiatal hernia repair + TIF (c-TIF)"
+      indication: "Hiatal hernia > 2 cm and < 4 cm AND LA grade < C"
+  lifestyle:
+    - "Weight loss if BMI >= 25"
+    - "Head-of-bed elevation 6–8 inches"
+    - "No oral intake for 3 hours before lying supine"
+    - "Avoid individual trigger foods (e.g. fatty/spicy foods, caffeine, alcohol, chocolate, mint)"
+  red_flags:
+    - "Progressive dysphagia"
+    - "Unintentional weight loss"
+    - "Iron-deficiency anemia / GI bleeding"
+    - "Hematemesis or melena"
+    - "New-onset symptoms at age >= 50"
+    - "Persistent vomiting"
+
+true_gerd_with_iem:
+  first_line:
+    - "PPI once daily; escalate to BID for partial response"
+    - "Prokinetic trial (metoclopramide short course, or domperidone where available) for regurgitation"
+    - "Add H2RA as needed when breakthrough symptoms occur"
+    - "Lifestyle modifications (see below)"
+  escalation:
+    - "Switch to P-CAB (vonoprazan) where available"
+    - "Add alginate after meals and at bedtime"
+    - "On-PPI pH-impedance if refractory"
+  procedural:
+    - id: nissen
+      label: "Nissen (complete 360°) fundoplication"
+      contraindicated: true
+      reason: "Complete wrap plus IEM carries high postoperative dysphagia risk"
+    - id: toupet
+      label: "Toupet (partial posterior 270°) fundoplication"
+      indication: "Preferred wrap in IEM — lower postoperative dysphagia risk while still providing anti-reflux barrier"
+    - id: tif
+      label: "Transoral incisionless fundoplication (TIF)"
+      indication: "May be considered: hiatal hernia <= 2 cm AND LA grade <= B"
+    - id: c_tif
+      label: "Concomitant hiatal hernia repair + TIF (c-TIF)"
+      indication: "May be considered: hiatal hernia > 2 cm and < 4 cm AND LA grade < C"
+  lifestyle:
+    - "Weight loss if BMI >= 25"
+    - "Head-of-bed elevation 6–8 inches"
+    - "No oral intake for 3 hours before lying supine"
+    - "Smaller, more frequent meals — reduces volume for impaired clearance"
+    - "Avoid individual trigger foods"
+  red_flags:
+    - "Progressive dysphagia"
+    - "Unintentional weight loss"
+    - "GI bleeding"
+    - "New-onset symptoms at age >= 50"
+
+reflux_hypersensitivity:
+  first_line:
+    - "Reassurance and explanation: objective reflux is normal; symptoms reflect esophageal visceral hypersensitivity"
+    - "Low-dose neuromodulator (TCA such as imipramine/amitriptyline 10–25 mg qhs, or SSRI)"
+    - "Cognitive behavioral therapy (CBT) for esophageal hypersensitivity"
+  escalation:
+    - "Esophageal-directed hypnotherapy"
+    - "Higher-dose neuromodulator titration"
+    - "Pain psychology referral"
+  procedural:
+    - id: not_applicable
+      label: "Anti-reflux surgery NOT indicated"
+      contraindicated: true
+      reason: "Reflux burden is normal; surgery will not relieve symptoms and carries procedural risk"
+  lifestyle:
+    - "Stress management, sleep hygiene"
+    - "Avoid fixation on individual reflux episodes"
+    - "Trigger-food avoidance IF patient identifies specific triggers"
+  red_flags:
+    - "Development of new alarm features (dysphagia, weight loss, bleeding) — repeat workup"
+
+functional_heartburn:
+  first_line:
+    - "Reassurance and explanation: this is a functional esophageal disorder (Rome IV)"
+    - "Discontinuation of PPI (no benefit demonstrated)"
+    - "Low-dose neuromodulator (TCA or SSRI) for symptom modulation"
+  escalation:
+    - "CBT or esophageal-directed hypnotherapy"
+    - "Higher-dose neuromodulator titration"
+    - "Multidisciplinary functional GI clinic referral"
+  procedural:
+    - id: not_applicable
+      label: "Anti-reflux surgery NOT indicated"
+      contraindicated: true
+      reason: "No objective reflux disease; surgery will not help and carries risk"
+  lifestyle:
+    - "Stress management"
+    - "Regular sleep schedule"
+    - "Exercise"
+  red_flags:
+    - "Development of new alarm features — repeat workup"
+
+eoe_masquerade:
+  first_line:
+    - "PPI BID x 8 weeks (a subset of EoE is PPI-responsive — this is a therapeutic trial, not diagnostic)"
+    - "Topical swallowed steroid (budesonide oral suspension or fluticasone MDI swallowed) x 8 weeks"
+    - "Dietary elimination (empiric 6-food or 2-food) as an alternative first-line"
+    - "Refer to GI +/- allergy for ongoing management"
+  escalation:
+    - "Dupilumab for refractory or steroid-dependent disease"
+    - "Combination therapy (PPI + topical steroid)"
+    - "Endoscopic dilation for fibrostenotic disease"
+  procedural:
+    - id: esophageal_dilation
+      label: "Endoscopic esophageal dilation"
+      indication: "Fibrostenotic EoE with stricture or narrowing causing dysphagia; proceed cautiously and incrementally"
+  lifestyle:
+    - "If empiric elimination diet: structured reintroduction with biopsy confirmation at each step"
+    - "Allergy evaluation if atopic history"
+    - "Avoid known personal food triggers"
+  red_flags:
+    - "Acute food impaction — emergency endoscopy"
+    - "Progressive solid-food dysphagia"
+    - "Unintentional weight loss"
+
+achalasia_masquerade:
+  first_line:
+    - "DO NOT PURSUE ANTI-REFLUX THERAPY — this is a major motility disorder, not GERD"
+    - "Confirm with timed barium esophagram (bird-beak EGJ, poor emptying)"
+    - "Refer to esophageal motility specialist / foregut surgery"
+  escalation:
+    - "Expedite motility specialist evaluation if symptoms severe or nutritional compromise"
+  procedural:
+    - id: pneumatic_dilation
+      label: "Pneumatic (balloon) dilation"
+      indication: "Type I or II achalasia; repeat series often required"
+    - id: heller_myotomy
+      label: "Laparoscopic Heller myotomy with partial fundoplication (Dor or Toupet)"
+      indication: "Type I, II, or III achalasia; durable anatomic solution"
+    - id: poem
+      label: "Peroral endoscopic myotomy (POEM)"
+      indication: "All achalasia subtypes including type III; higher rate of post-procedure GERD"
+  lifestyle:
+    - "Chew food thoroughly, eat upright"
+    - "Avoid late meals and lying supine soon after eating (aspiration risk)"
+    - "Soft diet if mechanical obstruction features"
+  red_flags:
+    - "Aspiration pneumonia"
+    - "Significant weight loss / nutritional compromise"
+    - "Food impaction"
+
+hiatal_hernia_dominant:
+  first_line:
+    - "PPI BID x 8 weeks"
+    - "Positional measures (head-of-bed elevation, left-lateral decubitus at night)"
+    - "Small, frequent meals to reduce gastric distension"
+    - "Add H2RA as needed when breakthrough symptoms occur"
+  escalation:
+    - "Add alginate after meals and at bedtime"
+    - "Surgical evaluation if refractory, especially with regurgitation or mechanical symptoms"
+  procedural:
+    - id: hh_repair_with_fundoplication
+      label: "Laparoscopic hiatal hernia repair with partial or complete fundoplication"
+      indication: "Large hernia with intrathoracic stomach and refractory symptoms; wrap type per peristaltic status (Toupet if IEM)"
+    - id: c_tif
+      label: "Concomitant hiatal hernia repair + TIF (c-TIF)"
+      indication: "Hiatal hernia > 2 cm and < 4 cm AND LA grade < C"
+  lifestyle:
+    - "Weight loss if BMI >= 25"
+    - "Head-of-bed elevation 6–8 inches"
+    - "Avoid lying supine for 3 hours after meals"
+  red_flags:
+    - "Cameron lesion bleeding / iron-deficiency anemia"
+    - "Acute severe chest/epigastric pain (consider gastric volvulus)"
+    - "New obstructive symptoms (dysphagia, nausea, inability to vomit)"
+
+non_acid_reflux_on_ppi:
+  first_line:
+    - "Confirm PPI adherence and optimal timing (30–60 min pre-meal)"
+    - "Add alginate after meals and at bedtime"
+    - "Lifestyle modifications (see below)"
+  escalation:
+    - "Baclofen 5–10 mg TID (reduces transient LES relaxations) with monitoring for somnolence"
+    - "Low-dose TCA if hypersensitivity component suspected"
+    - "Anti-reflux surgery referral if symptoms remain refractory with objective non-acid reflux and positive symptom association"
+  procedural:
+    - id: fundoplication
+      label: "Fundoplication (Toupet or Nissen per peristaltic status)"
+      indication: "Refractory non-acid reflux with objectively positive symptom association on PPI"
+    - id: c_tif
+      label: "Concomitant hiatal hernia repair + TIF (c-TIF)"
+      indication: "Hiatal hernia > 2 cm and < 4 cm AND LA grade < C"
+  lifestyle:
+    - "Weight loss if BMI >= 25"
+    - "Head-of-bed elevation"
+    - "No oral intake for 3 hours before lying supine"
+  red_flags:
+    - "Progressive dysphagia"
+    - "Weight loss"
+    - "GI bleeding"
+
+gastroparesis_driven_reflux:
+  first_line:
+    - "Dietary: small frequent meals, low-fat, low-fiber, small-particle diet"
+    - "Glycemic optimization if diabetic (target HbA1c < 7% where safe)"
+    - "Prokinetic: metoclopramide short course (boxed warning, limit duration) or domperidone where available"
+    - "PPI for the acid component if symptomatic"
+  escalation:
+    - "Antiemetic (ondansetron, prochlorperazine) for nausea"
+    - "Nutrition referral"
+    - "Consider gastric emptying re-test after 3 months of optimization"
+    - "G-POEM referral for refractory gastroparesis with objective delay"
+  procedural:
+    - id: g_poem
+      label: "Gastric peroral endoscopic myotomy (G-POEM)"
+      indication: "Refractory gastroparesis with persistent objective delay; best responses in diabetic and post-surgical phenotypes"
+    - id: gastric_electrical_stimulation
+      label: "Gastric electrical stimulator"
+      indication: "Refractory gastroparesis, particularly diabetic phenotype with predominant nausea/vomiting"
+  lifestyle:
+    - "Small frequent meals (4–6/day), minimize carbonated beverages"
+    - "Remain upright for 2 hours after meals"
+    - "Adequate hydration"
+    - "Review contributing medications (GLP-1, opioids, anticholinergics) with prescribers"
+  red_flags:
+    - "Severe dehydration / inability to maintain oral intake"
+    - "Recurrent hospitalizations for gastroparesis"
+    - "Bezoar formation"
+    - "Unintentional weight loss"
+
+post_sleeve_gerd:
+  first_line:
+    - "PPI BID (often required long-term after sleeve)"
+    - "Do NOT lie supine within 3 hours of meals"
+    - "Weight-maintenance diet; small frequent meals"
+  escalation:
+    - "Add alginate after meals and at bedtime"
+    - "Add H2RA as needed when breakthrough symptoms occur"
+    - "Bariatric surgery referral for conversion if refractory"
+  procedural:
+    - id: rygb_conversion
+      label: "Conversion to Roux-en-Y gastric bypass (RYGB)"
+      indication: "Definitive surgical option for refractory post-sleeve GERD; diverts acid away from esophagus"
+    - id: nissen_fundoplication_post_sleeve
+      label: "Nissen fundoplication after sleeve"
+      contraindicated: true
+      reason: "Sleeve anatomy (absent fundus, intrathoracic sleeve migration) precludes a conventional wrap"
+  lifestyle:
+    - "Head-of-bed elevation"
+    - "Weight-regain prevention"
+    - "Avoid carbonated beverages and late meals"
+  red_flags:
+    - "Intractable regurgitation"
+    - "New Barrett's esophagus on surveillance endoscopy"
+    - "Weight regain with worsening symptoms"
+
+post_myotomy_gerd:
+  first_line:
+    - "PPI (often long-term / lifelong after myotomy)"
+    - "Lifestyle measures (see below)"
+    - "Add H2RA as needed when breakthrough symptoms occur"
+  escalation:
+    - "Add alginate after meals and at bedtime"
+    - "Endoscopic surveillance for Barrett's (higher risk after POEM than Heller + Dor)"
+  procedural:
+    - id: partial_fundoplication_after_heller
+      label: "Partial fundoplication (Dor or Toupet) as an adjunct if not already performed with original Heller"
+      indication: "Severe refractory reflux after Heller myotomy without existing wrap; preferred over full Nissen to preserve relief of outflow obstruction"
+    - id: nissen_after_myotomy
+      label: "Complete (Nissen) fundoplication after myotomy"
+      contraindicated: true
+      reason: "Complete wrap risks recreating functional outflow obstruction that the myotomy was intended to relieve"
+  lifestyle:
+    - "Head-of-bed elevation"
+    - "Avoid late meals and supine position post-meal"
+    - "Weight management"
+  red_flags:
+    - "Progressive recurrent dysphagia (failed myotomy vs peptic stricture)"
+    - "Unintentional weight loss"
+    - "New Barrett's on surveillance"
+
+indeterminate:
+  first_line:
+    - "Refer to or discuss the case with a gastroenterologist for comprehensive workup"
+    - "Review for alarm features (see red flags) — expedite endoscopy if any are present"
+    - "Review the medication list for reflux contributors (NSAIDs, bisphosphonates, CCBs, nitrates, opioids, GLP-1 receptor agonists, anticholinergics)"
+    - "Empiric lifestyle measures (see below) while the workup is being arranged"
+  escalation:
+    - "Complete the workup that is missing: endoscopy with biopsies (including proximal and distal esophagus), HRM per Chicago v4.0, off-PPI pH-impedance"
+    - "Gastric emptying study if regurgitation-dominant or on GLP-1 / opioid therapy"
+    - "Consider EndoFLIP at 60 mL if HRM is equivocal or if major motility disorder suspected"
+  procedural:
+    - id: deferred_until_mechanism_clarified
+      label: "Procedural / surgical options deferred"
+      indication: "Do NOT proceed with anti-reflux surgery or motility procedures until a mechanism is defined by objective testing"
+  lifestyle:
+    - "Weight loss if BMI >= 25"
+    - "Head-of-bed elevation 6–8 inches"
+    - "No oral intake for 3 hours before lying supine"
+    - "Avoid individual trigger foods"
+  red_flags:
+    - "Progressive dysphagia"
+    - "Unintentional weight loss"
+    - "Iron-deficiency anemia / GI bleeding"
+    - "Hematemesis or melena"
+    - "New-onset symptoms at age >= 50"
+    - "Persistent vomiting"
+    - "Food impaction (emergency)"
+
+
+post_fundoplication_failure:
+  first_line:
+    - "PPI BID"
+    - "Barium esophagram and endoscopy to evaluate wrap anatomy (slipped, herniated, disrupted)"
+    - "Lifestyle measures (see below)"
+  escalation:
+    - "Add alginate after meals and at bedtime"
+    - "Add H2RA as needed when breakthrough symptoms occur"
+    - "Foregut surgery referral for operative planning"
+  procedural:
+    - id: redo_fundoplication
+      label: "Redo fundoplication"
+      indication: "Confirmed anatomical wrap failure (slip, disruption, intrathoracic migration) at an experienced foregut center"
+    - id: rygb_conversion_for_failed_wrap
+      label: "Conversion to Roux-en-Y gastric bypass"
+      indication: "Consider in obesity or multiple failed wraps; diverts acid and provides weight-loss benefit"
+  lifestyle:
+    - "Head-of-bed elevation"
+    - "Weight management"
+    - "Avoid late meals and supine position post-meal"
+  red_flags:
+    - "Acute post-operative dysphagia (evaluate for slipped wrap)"
+    - "Severe chest pain with retching (concern for herniated wrap)"
+    - "Recurrent esophagitis on surveillance"
+
+
+# ---------------------------------------------------------------------------
+# Contributing-factor modifiers.
+#
+# Keyed by the ContributingMed enum value (plus "pregnancy"). The engine
+# renders any that apply and appends them to the top-ranked management
+# plan's modifiers_from_contributing_factors list.
+# ---------------------------------------------------------------------------
+contributing_factor_modifiers:
+  glp1:
+    - "GLP-1 receptor agonist on board: delays gastric emptying and may aggravate reflux/regurgitation. Discuss dose reduction or hold with the prescribing clinician, particularly if gastroparesis is suspected."
+  opioid:
+    - "Opioid exposure: impairs esophageal clearance and LES function. Minimize dose, transition off where feasible, and consider opioid-induced esophageal dysmotility if HRM is abnormal."
+  ccb:
+    - "Calcium channel blocker: reduces LES tone. Consider alternative antihypertensive if symptoms are temporally associated."
+  nitrate:
+    - "Nitrate therapy: reduces LES tone. Consider alternative if symptoms are temporally associated."
+  anticholinergic:
+    - "Anticholinergic burden: review medications and simplify where possible; contributes to reflux via reduced LES tone and delayed emptying."
+  bisphosphonate:
+    - "Bisphosphonate: strict posture/administration instructions (remain upright >= 30 min, with plain water) to reduce pill-induced esophagitis risk."
+  tricyclic:
+    - "Tricyclic antidepressant: may contribute to reduced esophageal clearance; consider this when TCAs are also being considered as neuromodulators for hypersensitivity."
+  benzodiazepine:
+    - "Benzodiazepine: may reduce LES tone; review indication and consider taper."
+  pregnancy:
+    - "Pregnancy: first-line is lifestyle + alginate; H2RA (famotidine) if needed. PPIs are generally acceptable (class B) but reserve for moderate–severe symptoms."

@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: gerd-dx
+Version: 0.1.0
+Summary: Mechanism-based GERD diagnostic reasoning tool (educational / decision-support only).
+Requires-Python: >=3.11
+Requires-Dist: pydantic>=2.6
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: typer>=0.12
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Provides-Extra: web
+Requires-Dist: streamlit>=1.30; extra == "web"

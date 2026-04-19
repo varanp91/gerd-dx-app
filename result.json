@@ -1,0 +1,102 @@
+{
+  "disclaimer": "This tool is for clinical education and decision support only. It is not a diagnostic device and must not be used for autonomous patient care. All recommendations require independent clinical verification by a qualified clinician.",
+  "ranked_mechanisms": [
+    {
+      "mechanism_id": "true_gerd_competent_peristalsis",
+      "label": "True acid GERD with competent peristalsis",
+      "confidence": "high",
+      "evidence": [
+        {
+          "rule_id": "LYON_CONCLUSIVE_LA_CD",
+          "mechanism_id": "true_gerd_competent_peristalsis",
+          "strength": "conclusive",
+          "trigger": "LA grade C esophagitis",
+          "source": "Lyon Consensus 2.0"
+        },
+        {
+          "rule_id": "LYON_AET_PATHOLOGIC",
+          "mechanism_id": "true_gerd_competent_peristalsis",
+          "strength": "strong",
+          "trigger": "AET 9.2% (> 6.0% off-PPI)",
+          "source": "Lyon Consensus 2.0"
+        },
+        {
+          "rule_id": "HRM_NORMAL_PERISTALSIS",
+          "mechanism_id": "true_gerd_competent_peristalsis",
+          "strength": "supportive",
+          "trigger": "HRM shows normal peristalsis",
+          "source": "Chicago Classification v4.0"
+        }
+      ]
+    }
+  ],
+  "combinations_flagged": [],
+  "contributing_factors": [],
+  "insufficient_inputs": [
+    "Esophageal biopsies (eosinophil count) not documented despite dysphagia or PPI nonresponse. EoE cannot be excluded — obtain >=6 biopsies from proximal + distal esophagus per ACG/AGREE."
+  ],
+  "conflicts": [],
+  "refractory_flag": false,
+  "management": {
+    "true_gerd_competent_peristalsis": {
+      "mechanism_id": "true_gerd_competent_peristalsis",
+      "first_line": [
+        "PPI once daily 30–60 min before meals x 8 weeks (escalate to BID if partial response)",
+        "Confirm PPI adherence and timing before declaring failure",
+        "Lifestyle modifications (see below)"
+      ],
+      "escalation": [
+        "Switch to P-CAB (vonoprazan) where available",
+        "Add H2RA as needed when breakthrough symptoms occur",
+        "Add alginate after meals and at bedtime for postprandial acid pocket",
+        "On-PPI pH-impedance if refractory to confirm whether ongoing symptoms are acid, non-acid, or functional"
+      ],
+      "procedural": [
+        {
+          "id": "nissen",
+          "label": "Nissen (complete 360°) fundoplication",
+          "indication": "Objective GERD with intact peristalsis; failed or intolerant of medical therapy",
+          "contraindicated": false,
+          "reason": null
+        },
+        {
+          "id": "toupet",
+          "label": "Toupet (partial posterior 270°) fundoplication",
+          "indication": "Alternative wrap with lower postoperative dysphagia risk; acceptable in intact peristalsis",
+          "contraindicated": false,
+          "reason": null
+        },
+        {
+          "id": "tif",
+          "label": "Transoral incisionless fundoplication (TIF)",
+          "indication": "Hiatal hernia <= 2 cm AND LA grade <= B",
+          "contraindicated": false,
+          "reason": null
+        },
+        {
+          "id": "c_tif",
+          "label": "Concomitant hiatal hernia repair + TIF (c-TIF)",
+          "indication": "Hiatal hernia > 2 cm and < 4 cm AND LA grade < C",
+          "contraindicated": false,
+          "reason": null
+        }
+      ],
+      "lifestyle": [
+        "Weight loss if BMI >= 25",
+        "Head-of-bed elevation 6–8 inches",
+        "No oral intake for 3 hours before lying supine",
+        "Avoid individual trigger foods (e.g. fatty/spicy foods, caffeine, alcohol, chocolate, mint)"
+      ],
+      "red_flags": [
+        "Progressive dysphagia",
+        "Unintentional weight loss",
+        "Iron-deficiency anemia / GI bleeding",
+        "Hematemesis or melena",
+        "New-onset symptoms at age >= 50",
+        "Persistent vomiting"
+      ],
+      "modifiers_from_contributing_factors": []
+    }
+  },
+  "red_flags": []
+}
